@@ -67,9 +67,9 @@ namespace MVCToDoList.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public ActionResult Delete(Guid guid)
+        public async Task<ActionResult> Delete(Guid guid)
         {
-            var item = _repository.FindById(guid);
+            var item = await _repository.FindById(guid);
             return View(item);
         }
 
@@ -80,7 +80,6 @@ namespace MVCToDoList.Controllers
         {
             var item = await _repository.FindById(guid);
             await _repository.Remove(item);
-            var list = await _repository.GetAllAsync();
             return RedirectToAction(nameof(Index));
         }
     }
