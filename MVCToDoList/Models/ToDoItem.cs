@@ -2,7 +2,7 @@
 
 namespace MVCToDoList.Models
 {
-    public class ToDo
+    public class ToDoItem
     {
         [Display(Name = "Id")]
         public Guid GuidItem { get; set; } = Guid.NewGuid();

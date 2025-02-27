@@ -1,7 +1,11 @@
+using MVCToDoList.Interfaces;
+using MVCToDoList.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<ITodoItemRepository, TodoItemMemoryRepository>();
 
 var app = builder.Build();
 

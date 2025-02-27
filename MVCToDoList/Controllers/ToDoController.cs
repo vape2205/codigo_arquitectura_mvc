@@ -1,25 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MVCToDoList.Interfaces;
 using MVCToDoList.Models;
 
 namespace MVCToDoList.Controllers
 {
     public class ToDoController : Controller
     {
-        private static List<ToDo> _list = new List<ToDo>
-        {
-            new ToDo{ Description = "Item 1", Done = false },
-            new ToDo{ Description = "Item 2", Done = false },
-            new ToDo{ Description = "Item 3", Done = false },
-            new ToDo{ Description = "Item 4", Done = false },
-            new ToDo{ Description = "Item 5", Done = false },
-            new ToDo{ Description = "Item 6", Done = false },
-            new ToDo{ Description = "Item 7", Done = false },
-            new ToDo{ Description = "Item 8", Done = false },
-        };
+        private readonly ITodoItemRepository _repository;
 
-        public ActionResult Index()
+        public ToDoController(ITodoItemRepository repository)
         {
-            return View(_list);
+            _repository=repository;
+        }
+
+        public async Task<ActionResult> Index()
+        {
+            var list = await _repository.GetAllAsync();
+            return View(list);
         }
 
         public ActionResult Create()
@@ -29,51 +26,52 @@ namespace MVCToDoList.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(ToDo model)
+        public async Task<ActionResult> Create(ToDoItem model)
         {
             if (ModelState.IsValid)
             {
-                _list.Add(model);
-                return View("Index", _list);
+                await _repository.Add(model);
+                var list = await _repository.GetAllAsync();
+                return View("Index", list);
             }
             else
             {
-                ModelState.AddModelError("Description", "Modelo no valido");
                 return View();
             }
-
         }
 
-        public ActionResult Edit(Guid guid)
+        public async Task<ActionResult> Edit(Guid guid)
         {
-            var item = _list.First(x => x.GuidItem == guid);
+            var item = await _repository.FindById(guid);
             return View(item);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(ToDo model)
+        public async Task<ActionResult> Edit(ToDoItem model)
         {
-            var item = _list.First(x => x.GuidItem == model.GuidItem);
+            var item = await _repository.FindById(model.GuidItem);
             item.Description = model.Description;
             item.Done = model.Done;
-            return View("Index", _list);
+            var list = await _repository.GetAllAsync();
+            return View("Index", list);
         }
 
         public ActionResult Delete(Guid guid)
         {
-            var item = _list.First(x => x.GuidItem == guid);
+            var item = _repository.FindById(guid);
             return View(item);
         }
 
         // POST: ToDoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(Guid guid, IFormCollection formCollection)
+        public async Task<ActionResult> Delete(Guid guid, IFormCollection formCollection)
         {
-            var item = _list.First(x => x.GuidItem == guid);
-            _list.Remove(item);
-            return View("Index", _list);
+            var item = await _repository.FindById(guid);
+            await _repository.Remove(item);
+            var list = await _repository.GetAllAsync();
+            return View("Index", list);
         }
     }
 }
