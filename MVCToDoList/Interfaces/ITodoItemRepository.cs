@@ -8,5 +8,6 @@ namespace MVCToDoList.Interfaces
         Task<ToDoItem> FindById(Guid guid);
         Task Add(ToDoItem toDo);
         Task Remove(ToDoItem toDo);
+        Task Update(ToDoItem toDo);
     }
 }

@@ -32,7 +32,7 @@ namespace MVCToDoList.Controllers
             {
                 await _repository.Add(model);
                 var list = await _repository.GetAllAsync();
-                return View("Index", list);
+                return RedirectToAction(nameof(Index));
             }
             else
             {
@@ -53,8 +53,18 @@ namespace MVCToDoList.Controllers
             var item = await _repository.FindById(model.GuidItem);
             item.Description = model.Description;
             item.Done = model.Done;
-            var list = await _repository.GetAllAsync();
-            return View("Index", list);
+            await _repository.Update(item);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Mark(Guid guidItem)
+        {
+            var item = await _repository.FindById(guidItem);
+            item.Done = !item.Done;
+            await _repository.Update(item);
+            return RedirectToAction(nameof(Index));
         }
 
         public ActionResult Delete(Guid guid)
@@ -71,7 +81,7 @@ namespace MVCToDoList.Controllers
             var item = await _repository.FindById(guid);
             await _repository.Remove(item);
             var list = await _repository.GetAllAsync();
-            return View("Index", list);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

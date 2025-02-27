@@ -23,6 +23,14 @@ namespace MVCToDoList.Repositories
             return Task.CompletedTask;
         }
 
+        public Task Update(ToDoItem toDo)
+        {
+            var oldItem = _list.Find(x=>x.GuidItem.Equals(toDo.GuidItem));
+            var index = _list.IndexOf(oldItem);
+            _list[index] = toDo;
+            return Task.CompletedTask;
+        }
+
         public Task<IEnumerable<ToDoItem>> GetAllAsync()
         {
             return Task.FromResult(_list.AsEnumerable());
@@ -39,5 +47,7 @@ namespace MVCToDoList.Repositories
             _list.Remove(toDo);
             return Task.CompletedTask;
         }
+
+       
     }
 }

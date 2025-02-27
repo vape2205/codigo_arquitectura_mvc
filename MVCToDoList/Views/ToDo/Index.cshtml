@@ -27,7 +27,10 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Done)
+                    <form asp-action="Mark">
+                        <input type="hidden" asp-for="@item.GuidItem" name="GuidItem" class="form-control" />
+                        <input type="checkbox" onchange="this.form.submit()" asp-for="@item.Done" />
+                    </form>
                 </td>
 
                 <td>

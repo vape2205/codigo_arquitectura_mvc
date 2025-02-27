@@ -1,11 +1,16 @@
+using Microsoft.EntityFrameworkCore;
 using MVCToDoList.Interfaces;
+using MVCToDoList.Persistence;
 using MVCToDoList.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<ITodoItemRepository, TodoItemMemoryRepository>();
+builder.Services.AddScoped<ITodoItemRepository, TodoItemRepository>();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AppDb")));
 
 var app = builder.Build();
 
