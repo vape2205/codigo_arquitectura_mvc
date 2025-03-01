@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MVCToDoList.DTOs.ToDoItem;
 using MVCToDoList.Interfaces;
 using MVCToDoList.Models;
 
@@ -19,17 +20,20 @@ namespace MVCToDoList.Controllers.api
 
         // GET: api/<TodoItemController>
         [HttpGet]
-        public async Task<IEnumerable<ToDoItem>> Get()
+        public async Task<IEnumerable<ViewItem>> Get()
         {
-            return await _repository.GetAllAsync();
-        }
-
-        // DELETE api/<TodoItemController>/5
-        [HttpDelete("{id}")]
-        public async void Delete(Guid id)
-        {
-            var item = await _repository.FindById(id);
-            await _repository.Remove(item);
+            var list = await _repository.GetAllAsync();
+            var listModel = new List<ViewItem>();
+            foreach (var item in list)
+            {
+                listModel.Add(new ViewItem
+                {
+                    GuidItem = item.GuidItem,
+                    Description = item.Description,
+                    Done = item.Done
+                });
+            }
+            return listModel;
         }
     }
 }
