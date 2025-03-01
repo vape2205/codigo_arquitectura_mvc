@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MVCToDoList.DTOs.ToDoItem;
 using MVCToDoList.Interfaces;
 using MVCToDoList.Models;
 
@@ -16,7 +17,17 @@ namespace MVCToDoList.Controllers
         public async Task<ActionResult> Index()
         {
             var list = await _repository.GetAllAsync();
-            return View(list);
+            var listModel = new List<ViewItem>();
+            foreach (var item in list)
+            {
+                listModel.Add(new ViewItem
+                {
+                    GuidItem = item.GuidItem,
+                    Description = item.Description,
+                    Done = item.Done
+                });
+            }
+            return View(listModel);
         }
 
         public ActionResult Create()
@@ -26,11 +37,16 @@ namespace MVCToDoList.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(ToDoItem model)
+        public async Task<ActionResult> Create(CreateItem model)
         {
             if (ModelState.IsValid)
             {
-                await _repository.Add(model);
+                var entity = new ToDoItem
+                {
+                    Description = model.Description,
+                    Done = model.Done
+                };
+                await _repository.Add(entity);
                 var list = await _repository.GetAllAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -43,12 +59,18 @@ namespace MVCToDoList.Controllers
         public async Task<ActionResult> Edit(Guid guid)
         {
             var item = await _repository.FindById(guid);
-            return View(item);
+            var model = new ViewItem
+            {
+                GuidItem = item.GuidItem,
+                Description = item.Description,
+                Done = item.Done
+            };
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(ToDoItem model)
+        public async Task<ActionResult> Edit(EditItem model)
         {
             var item = await _repository.FindById(model.GuidItem);
             item.Description = model.Description;
@@ -70,7 +92,13 @@ namespace MVCToDoList.Controllers
         public async Task<ActionResult> Delete(Guid guid)
         {
             var item = await _repository.FindById(guid);
-            return View(item);
+            var model = new ViewItem
+            {
+                GuidItem = item.GuidItem,
+                Description = item.Description,
+                Done = item.Done
+            };
+            return View(model);
         }
 
         // POST: ToDoController/Delete/5

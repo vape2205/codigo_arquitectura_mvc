@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MVCToDoList.Models
+namespace MVCToDoList.DTOs.ToDoItem
 {
-    public class ToDoItem
+    public class ViewItem
     {
-        [Key]
+        [Display(Name = "Id")]
         public Guid GuidItem { get; set; } = Guid.NewGuid();
+        [Display(Name = "Descripción")]
         public string Description { get; set; }
+        [Display(Name = "¿Hecho?")]
         public bool Done { get; set; }
     }
 }
