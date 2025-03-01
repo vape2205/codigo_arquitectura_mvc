@@ -2,9 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using MVCToDoList.Interfaces;
 using MVCToDoList.Persistence;
 using MVCToDoList.Repositories;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ITodoItemRepository, TodoItemRepository>();

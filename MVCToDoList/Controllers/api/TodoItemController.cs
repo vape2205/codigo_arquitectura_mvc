@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using MVCToDoList.DTOs.ToDoItem;
 using MVCToDoList.Interfaces;
 using MVCToDoList.Models;
@@ -12,10 +13,13 @@ namespace MVCToDoList.Controllers.api
     public class TodoItemController : ControllerBase
     {
         private readonly ITodoItemRepository _repository;
+        private readonly IMapper _mapper;
 
-        public TodoItemController(ITodoItemRepository repository)
+        public TodoItemController(ITodoItemRepository repository,
+            IMapper mapper)
         {
             _repository=repository;
+            _mapper=mapper;
         }
 
         // GET: api/<TodoItemController>
@@ -24,16 +28,7 @@ namespace MVCToDoList.Controllers.api
         {
             var list = await _repository.GetAllAsync();
             var listModel = new List<ViewItem>();
-            foreach (var item in list)
-            {
-                listModel.Add(new ViewItem
-                {
-                    GuidItem = item.GuidItem,
-                    Description = item.Description,
-                    Done = item.Done
-                });
-            }
-            return listModel;
+            return _mapper.Map<IEnumerable<ViewItem>>(list);
         }
     }
 }
